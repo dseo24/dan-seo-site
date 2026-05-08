@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dan Seo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Departure+Mono&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header id="site-header">
+      <span id="site-name">Dan Seo</span>
+      <nav id="site-nav" class="nav-hidden">
+        <button class="nav-link" data-index="0">About</button>
+        <button class="nav-link" data-index="1">Projects</button>
+        <button class="nav-link" data-index="2">Resume</button>
+      </nav>
+    </header>
+    <div id="intro"><span>Press any key</span></div>
+    <div id="ui">
+      <button class="arrow" id="arrow-left">&#8249;</button>
+      <button class="arrow" id="arrow-right">&#8250;</button>
+      <div id="cube-label"></div>
+    </div>
+    <div id="overlay">
+      <div id="overlay-panel">
+        <div id="overlay-header">
+          <span id="overlay-title"></span>
+          <button id="overlay-close">&#x2715;</button>
+        </div>
+        <div id="overlay-body"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
