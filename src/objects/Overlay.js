@@ -26,6 +26,14 @@ export class Overlay {
     this._el.addEventListener('click', (e) => {
       if (e.target === this._el) this.close();
     });
+    this._projects.addEventListener('click', (e) => {
+      if (e.target !== this._projects) return;
+      if (this._detailPane.classList.contains('open')) {
+        this._closeDetail();
+      } else {
+        this.close();
+      }
+    });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         if (this._mode === 'projects' && this._detailPane.classList.contains('open')) {
