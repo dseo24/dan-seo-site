@@ -1,3 +1,4 @@
+import { inject } from '@vercel/analytics';
 import * as THREE from 'three';
 import { applyTheme } from './config/theme.js';
 import { appState, AppPhase } from './config/AppState.js';
@@ -21,6 +22,9 @@ import { createImagePlaneMaterial } from './utils/materials.js';
 import aboutContent from './objects/overlays/about.js';
 import projectsContent from './objects/overlays/projects.js';
 import resumeContent from './objects/overlays/resume.js';
+
+// ── Vercel Analytics ───────────────────────────────────────
+inject();
 
 // ── Theme ──────────────────────────────────────────────────
 applyTheme();
