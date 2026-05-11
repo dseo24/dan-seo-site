@@ -4,7 +4,6 @@ import { CAMERA_PORTFOLIO_Y } from './CameraController.js';
 const SUBTEXTS = [
   'product builder.',
   'v6 climber.',
-  'product manager.',
   'noodle monger.',
   'AI-pilled.',
   'makes good spotify playlists.',

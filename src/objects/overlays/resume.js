@@ -3,9 +3,11 @@ export default {
   title: 'Resume',
   render() {
     return `
+      <!-- 
       <p style="margin-bottom: 24px;">
         <a download style="font-weight: 500; color: var(--color-accent); text-decoration: none; border-bottom: 1px solid var(--color-accent);">Download my resume here</a>
       </p>
+      -->
 
       <div class="resume-section">
         <h2>Education</h2>
