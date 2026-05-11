@@ -406,6 +406,7 @@ canvas.with-header {
 
 .proj-detail-link {
   display: inline-block;
+  align-self: flex-start;
   margin-top: 4px;
   font-size: var(--text-sm);
   color: var(--color-accent);

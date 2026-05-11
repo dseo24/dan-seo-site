@@ -3,7 +3,7 @@ export const projects = [
     id: 'dan-seo-site',
     title: 'danseo.dev',
     stack: 'Three.js · Vite · Vanilla JS',
-    description: `My 3D/interactive take on the personal portfolio website. Built with Three.js and Vite. Scene, camera, and input handling are all custom.`,
+    description: `My 3D/interactive take on the personal portfolio website. Built with Three.js and Vite.`,
     media: { type: 'image', src: '/site-picture.png', alt: 'dan-seo site screenshot' },
     link: { href: 'https://github.com/dseo24/dan-seo-site/', label: 'View on GitHub' },
   },
