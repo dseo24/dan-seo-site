@@ -2,12 +2,11 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { createDitherPass } from './DitherPass.js';
 
-// Toggle this to turn dithering on/off
 const DITHER_ENABLED = true;
 
 export function createComposer(renderer, scene, camera) {
   const composer = new EffectComposer(renderer);
-  const dpr = renderer.getPixelRatio();
+  const dpr      = renderer.getPixelRatio();
   composer.setPixelRatio(dpr);
   composer.setSize(window.innerWidth, window.innerHeight);
   composer.addPass(new RenderPass(scene, camera));
@@ -15,10 +14,6 @@ export function createComposer(renderer, scene, camera) {
   if (DITHER_ENABLED) {
     composer.addPass(createDitherPass(1));
   }
-
-  window.addEventListener('resize', () => {
-    composer.setSize(window.innerWidth, window.innerHeight);
-  });
 
   return composer;
 }

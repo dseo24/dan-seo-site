@@ -1,15 +1,9 @@
 import * as THREE from 'three';
+import { CAMERA_HOME_Y } from '../controllers/CameraController.js';
 
 export function createCamera() {
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 6);
+  camera.position.set(0, CAMERA_HOME_Y, 6);
+  camera.lookAt(0, CAMERA_HOME_Y, 0);
   return camera;
-}
-
-export function onResize(camera, renderer) {
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
 }

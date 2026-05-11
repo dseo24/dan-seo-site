@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { COLORS } from '../theme.js';
+import { COLORS } from '../config/theme.js';
 
 export function createScene() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(COLORS.bg);
-const ambient = new THREE.AmbientLight(0xffffff, 1);
+const ambient = new THREE.AmbientLight(0xffffff, 1.2);
   scene.add(ambient);
 
   const keyLight = new THREE.DirectionalLight(0xffffff, 2);

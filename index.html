@@ -6,31 +6,59 @@
     <title>Dan Seo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Departure+Mono&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Departure+Mono&family=Geist:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <header id="site-header">
-      <span id="site-name">Dan Seo</span>
+    <header id="site-header" class="header-hidden">
+      <button id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <nav id="site-nav" class="nav-hidden">
         <button class="nav-link" data-index="0">About</button>
         <button class="nav-link" data-index="1">Projects</button>
         <button class="nav-link" data-index="2">Resume</button>
       </nav>
     </header>
-    <div id="intro"><span>Press any key</span></div>
+    <div id="homepage">
+      <div id="homepage-text">
+        <h1 id="homepage-name">Dan Seo</h1>
+        <p id="homepage-subtext"></p>
+      </div>
+      <button id="homepage-cta" aria-label="Enter site">&#8964;</button>
+    </div>
     <div id="ui">
-      <button class="arrow" id="arrow-left">&#8249;</button>
-      <button class="arrow" id="arrow-right">&#8250;</button>
       <div id="cube-label"></div>
     </div>
+    <div id="dialogue-box">
+      <span id="dialogue-cursor"></span>
+      <span id="dialogue-text"></span>
+      <span id="dialogue-caret">▮</span>
+      <button id="dialogue-close">&#x2715;</button>
+    </div>
     <div id="overlay">
-      <div id="overlay-panel">
+      <!-- Generic overlay (about, resume) -->
+      <div id="overlay-generic">
         <div id="overlay-header">
           <span id="overlay-title"></span>
           <button id="overlay-close">&#x2715;</button>
         </div>
         <div id="overlay-body"></div>
+      </div>
+
+      <!-- Projects two-panel overlay -->
+      <div id="overlay-projects">
+        <div id="projects-menu">
+          <div id="projects-menu-header">
+            <span>Projects</span>
+            <button id="projects-menu-close">&#x2715;</button>
+          </div>
+          <div id="projects-menu-list"></div>
+        </div>
+        <div id="projects-detail">
+          <button id="projects-detail-close">&#x2715;</button>
+          <div id="projects-detail-body"></div>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.js"></script>

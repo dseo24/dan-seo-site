@@ -1,6 +1,6 @@
-import { DITHER_PALETTE } from '../theme.js';
+import { DITHER_PALETTE } from '../config/theme.js';
 
-const DITHER_ENABLED = true;
+const DITHER_ENABLED = false;
 
 const BAYER_4X4 = [
    0/16,  8/16,  2/16, 10/16,
@@ -23,22 +23,20 @@ function nearestPaletteColor(r, g, b, palette) {
 function clamp(v) { return Math.max(0, Math.min(1, v)); }
 
 function buildDitherTile(pixelSize, palette) {
-  const size = 4 * pixelSize;
+  const size   = 4 * pixelSize;
   const canvas = document.createElement('canvas');
-  canvas.width = size;
+  canvas.width  = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
   for (let py = 0; py < 4; py++) {
     for (let px = 0; px < 4; px++) {
       const threshold = BAYER_4X4[py * 4 + px];
-
-      const [br, bg, bb] = palette[0]; // --color-bg
+      const [br, bg, bb] = palette[0];
       const sr = clamp(br + (threshold - 0.5) * 0.5);
       const sg = clamp(bg + (threshold - 0.5) * 0.5);
       const sb = clamp(bb + (threshold - 0.5) * 0.5);
       const [or, og, ob] = nearestPaletteColor(sr, sg, sb, palette);
-
       ctx.fillStyle = `rgb(${Math.round(or * 255)},${Math.round(og * 255)},${Math.round(ob * 255)})`;
       ctx.fillRect(px * pixelSize, py * pixelSize, pixelSize, pixelSize);
     }
@@ -47,25 +45,16 @@ function buildDitherTile(pixelSize, palette) {
   return canvas.toDataURL();
 }
 
-/**
- * Applies a Bayer-dithered overlay to DOM elements by injecting a
- * low-opacity absolutely-positioned child div. The dither sits above
- * the element background but below its content.
- *
- * @param {string[]} selectors   CSS selectors to target.
- * @param {number}   pixelSize   Block size in px (matches WebGL uPixelSize). Higher = more visible.
- * @param {number}   opacity     Overlay opacity (0–1). Keep low for a subtle effect.
- */
 export function initCssDither(
-  selectors = ['#overlay-panel'],
+  selectors = ['#overlay-generic', '#projects-menu', '#projects-detail-body'],
   pixelSize = 2,
-  opacity = 0.3,
+  opacity   = 0.3,
 ) {
   if (!DITHER_ENABLED) return;
 
   const palette = DITHER_PALETTE;
   const tileUrl = buildDitherTile(pixelSize, palette);
-  const size = 4 * pixelSize;
+  const size    = 4 * pixelSize;
 
   for (const sel of selectors) {
     const el = document.querySelector(sel);

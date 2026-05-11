@@ -7,7 +7,7 @@ const FLOOR_Y = -1.5;
 const WALL_Z = -17;
 
 const FLOOR = { cols: 14, rows: 10, cellW: 3, cellD: 3 };
-const WALL  = { cols: 14, rows: 6,  cellW: 3, cellH: 3 };
+const WALL  = { cols: 14, rows: 14, cellW: 3, cellH: 3 };
 
 function buildGrid(cols, rows, cellW, cellH) {
   const halfW = (cols / 2) * cellW;

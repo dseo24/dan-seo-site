@@ -1,35 +1,40 @@
 import * as THREE from 'three';
+import { applyTheme } from './config/theme.js';
+import { appState, AppPhase } from './config/AppState.js';
 import { createScene } from './core/scene.js';
 import { createRenderer } from './core/renderer.js';
-import { createCamera, onResize } from './core/camera.js';
-import { Cube } from './objects/Cube.js';
+import { createCamera } from './core/camera.js';
+import { createComposer } from './postfx/composer.js';
+import { initCssDither } from './postfx/CssDither.js';
+import { CameraController, CAMERA_HOME_Y } from './controllers/CameraController.js';
+import { HomepageController } from './controllers/HomepageController.js';
+import { InputHandler } from './controllers/InputHandler.js';
+import { initUI, showPortfolioUI } from './ui/ui.js';
+import { DialogueBox } from './ui/DialogueBox.js';
+import { Cube, CUBE_BASE_Y } from './objects/Cube.js';
 import { Shadow } from './objects/Shadow.js';
-import { CubeCarousel } from './objects/carousels/CubeCarousel.js';
-import { createImagePlaneMaterial } from './utils/materials.js';
-import { state } from './state.js';
-import { Overlay } from './objects/Overlay.js';
-import { InputHandler } from './app/InputHandler.js';
-import { initUI } from './app/ui.js';
-import { startLoop } from './app/loop.js';
 import { BackgroundGrid } from './objects/BackgroundGrid.js';
-import { createComposer } from './core/composer.js';
-import { initCssDither } from './core/CssDither.js';
-import { CUBE_BASE_Y } from './objects/Cube.js';
+import { CubeCarousel } from './objects/carousels/CubeCarousel.js';
+import { HomepageScene } from './objects/HomepageScene.js';
+import { Overlay } from './objects/Overlay.js';
+import { createImagePlaneMaterial } from './utils/materials.js';
 import aboutContent from './objects/overlays/about.js';
 import projectsContent from './objects/overlays/projects.js';
 import resumeContent from './objects/overlays/resume.js';
 
-const scene = createScene();
+// ── Theme ──────────────────────────────────────────────────
+applyTheme();
+
+// ── Three.js core ──────────────────────────────────────────
+const scene    = createScene();
 const renderer = createRenderer();
-const camera = createCamera();
+const camera   = createCamera();
+const composer = createComposer(renderer, scene, camera);
+initCssDither();
 
-// const EMERGE_DEPTH = -12;
-
+// ── Scene objects ──────────────────────────────────────────
 function makeCube(src, phase, tint = null) {
   const c = new Cube(createImagePlaneMaterial(src, tint), phase, new THREE.PlaneGeometry(2, 2));
-  // c.mesh.position.y = EMERGE_DEPTH;
-  // c.animState.baseY = EMERGE_DEPTH;
-  // c.animState.emergeY = EMERGE_DEPTH;
   scene.add(c.mesh);
   return c;
 }
@@ -40,31 +45,51 @@ const cubes = [
   makeCube('/folder.svg', 2.6, '#888888'),
 ];
 
-const shadow = new Shadow();
-scene.add(shadow.mesh);
+cubes.forEach(c => { c.animState.baseY = CUBE_BASE_Y; });
 
+const shadow         = new Shadow();
 const backgroundGrid = new BackgroundGrid();
+const homepageScene  = new HomepageScene(scene, CAMERA_HOME_Y);
+
+scene.add(shadow.mesh);
 scene.add(backgroundGrid.group);
 
-const carousel = new CubeCarousel(cubes, state);
-const overlay = new Overlay();
+// ── App objects ────────────────────────────────────────────
 const cubeContents = [aboutContent, projectsContent, resumeContent];
+const carousel     = new CubeCarousel(cubes);
+const overlay      = new Overlay();
+const cameraCtrl   = new CameraController(camera, renderer, composer);
 
-const composer = createComposer(renderer, scene, camera);
-initCssDither();
-
-// TODO: re-enable begin() intro when dither is resolved
-cubes.forEach(c => { c.animState.baseY = CUBE_BASE_Y; });
-// Pre-settle carousel positions so cubes don't explode in on first frame
 for (let i = 0; i < 120; i++) carousel.update(0);
-document.getElementById('intro').style.display = 'none';
-// TODO: remove when begin() is re-enabled
-setTimeout(() => document.getElementById('ui').classList.add('visible'), 50);
-document.getElementById('site-nav').classList.remove('nav-hidden');
-// TODO: remove when begin() is re-enabled
-document.getElementById('cube-label').textContent = cubeContents[state.selectedIndex]?.title ?? '';
 
-new InputHandler(renderer.domElement, { camera, carousel, overlay, cubeContents, state });
-initUI(carousel, cubeContents, cubes, overlay);
-onResize(camera, renderer);
-startLoop(carousel, shadow, composer, scene, camera);
+new InputHandler(renderer.domElement, { camera, carousel, overlay, cubeContents });
+initUI(carousel, cubeContents, overlay);
+
+const dialogueBox  = new DialogueBox();
+const homepageCtrl = new HomepageController(cameraCtrl, homepageScene, () => {
+  showPortfolioUI();
+  dialogueBox.show();
+});
+
+// ── Animation loop ─────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const t = performance.now() * 0.001;
+
+  const isHomephase = appState.phase === AppPhase.HOMEPAGE || appState.phase === AppPhase.PANNING;
+
+  if (isHomephase) {
+    cameraCtrl.update();
+    homepageCtrl.update(t);
+  }
+
+  if (appState.phase === AppPhase.PANNING || appState.phase === AppPhase.PORTFOLIO) {
+    carousel.update(t);
+    const { x, y, z } = carousel.getSelected().mesh.position;
+    shadow.update(x, y, z);
+  }
+
+  composer.render();
+}
+
+animate();

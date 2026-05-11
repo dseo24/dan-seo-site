@@ -1,5 +1,5 @@
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { DITHER_PALETTE } from '../theme.js';
+import { DITHER_PALETTE } from '../config/theme.js';
 
 // 4x4 Bayer matrix, normalized to [0,1]
 const BAYER_4X4 = [
@@ -11,12 +11,12 @@ const BAYER_4X4 = [
 
 const DitherShader = {
   uniforms: {
-    tDiffuse: { value: null },
-    uResolution: { value: [window.innerWidth, window.innerHeight] },
-    uPalette: { value: null },
+    tDiffuse:     { value: null },
+    uResolution:  { value: [window.innerWidth, window.innerHeight] },
+    uPalette:     { value: null },
     uPaletteSize: { value: 0 },
-    uBayer: { value: new Float32Array(BAYER_4X4) },
-    uPixelSize: { value: 1 },
+    uBayer:       { value: new Float32Array(BAYER_4X4) },
+    uPixelSize:   { value: 1 },
   },
 
   vertexShader: /* glsl */`
@@ -52,17 +52,14 @@ const DitherShader = {
     }
 
     void main() {
-      // Pixelate UV so dither pattern is stable at any resolution
       vec2 pixUv = floor(vUv * uResolution / uPixelSize) * uPixelSize / uResolution;
       vec3 col = texture2D(tDiffuse, pixUv).rgb;
 
-      // Bayer threshold from 4x4 matrix
       vec2 px = floor(vUv * uResolution / uPixelSize);
       int bx = int(mod(px.x, 4.0));
       int by = int(mod(px.y, 4.0));
       float threshold = uBayer[by * 4 + bx];
 
-      // Spread color by threshold before snapping to palette
       vec3 spread = col + (threshold - 0.5) * 0.25;
       gl_FragColor = vec4(nearestPaletteColor(clamp(spread, 0.0, 1.0)), 1.0);
     }
@@ -70,9 +67,9 @@ const DitherShader = {
 };
 
 export function createDitherPass(pixelSize = 1) {
-  const pass = new ShaderPass(DitherShader);
+  const pass    = new ShaderPass(DitherShader);
   const palette = DITHER_PALETTE;
-  const dpr = window.devicePixelRatio || 1;
+  const dpr     = window.devicePixelRatio || 1;
 
   const flat = new Float32Array(palette.length * 3);
   palette.forEach(([r, g, b], i) => {
@@ -81,17 +78,12 @@ export function createDitherPass(pixelSize = 1) {
 
   pass.material.uniforms.uResolution.value = [window.innerWidth * dpr, window.innerHeight * dpr];
   pass.material.uniforms.uPaletteSize.value = palette.length;
-  pass.material.uniforms.uPixelSize.value = pixelSize;
+  pass.material.uniforms.uPixelSize.value   = pixelSize;
+  pass.material.uniforms.uPalette           = { value: flat };
 
-  pass.material.uniforms.uPalette = { value: flat };
-
-  pass.material.fragmentShader = DitherShader.fragmentShader.replace(
-    'uniform vec3 uPalette[16];',
-    `uniform vec3 uPalette[${palette.length}];`
-  ).replace(
-    'for (int i = 1; i < 16; i++) {',
-    `for (int i = 1; i < ${palette.length}; i++) {`
-  );
+  pass.material.fragmentShader = DitherShader.fragmentShader
+    .replace('uniform vec3 uPalette[16];',      `uniform vec3 uPalette[${palette.length}];`)
+    .replace('for (int i = 1; i < 16; i++) {',  `for (int i = 1; i < ${palette.length}; i++) {`);
   pass.material.needsUpdate = true;
 
   window.addEventListener('resize', () => {

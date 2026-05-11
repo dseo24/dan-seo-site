@@ -1,10 +1,5 @@
-// Single source of truth for design tokens shared between CSS and JS.
-// CSS vars in style.css must stay in sync with these values manually.
-// DitherPass.js and CssDither.js read from here to avoid a CSS-timing
-// race on Vercel where getComputedStyle returns "" before stylesheets apply.
-
 export const COLORS = {
-  bg:        '#2f2f2f',
+  bg:        '#545454',
   fg:        '#1a1a1a',
   muted:     '#888888',
   bodyText:  '#444444',
@@ -31,3 +26,19 @@ export const DITHER_PALETTE = [
   hexToRgb(COLORS.border),
   hexToRgb(COLORS.overlayBg),
 ];
+
+/**
+ * Inject COLORS into CSS custom properties on :root.
+ * Call once at app startup — eliminates manual CSS/JS sync.
+ */
+export function applyTheme() {
+  const root = document.documentElement.style;
+  root.setProperty('--color-bg',         COLORS.bg);
+  root.setProperty('--color-fg',         COLORS.fg);
+  root.setProperty('--color-muted',      COLORS.muted);
+  root.setProperty('--color-body-text',  COLORS.bodyText);
+  root.setProperty('--color-accent',     COLORS.accent);
+  root.setProperty('--color-border',     COLORS.border);
+  root.setProperty('--color-overlay-bg', COLORS.overlayBg);
+  root.setProperty('--color-header-bg',  COLORS.headerBg);
+}

@@ -11,7 +11,7 @@ async function load(name, url, volume = 1) {
 
 export async function initSounds() {
   await Promise.all([
-    load('startup', '/sounds/startup.mp3', 0.0), // TODO: increase volume after fixing, begin is broken so muting it
+    load('startup', '/sounds/startup.mp3', 0.0),
     load('select', '/sounds/select.wav', 0.2),
   ]);
 }
@@ -28,8 +28,4 @@ export function play(name) {
   source.buffer = buf;
   source.connect(gain);
   source.start();
-}
-
-export function resumeCtx() {
-  if (ctx.state === 'suspended') ctx.resume();
 }

@@ -1,4 +1,4 @@
-const MAX_MOUSE_ROTATION = (40* Math.PI) / 180;
+const MAX_MOUSE_ROTATION = (60* Math.PI) / 180;
 
 const FLOAT_AMPLITUDE_Y = 0.12;
 const FLOAT_FREQ_Y = 0.3;
@@ -22,8 +22,13 @@ export function applyFloat(mesh, animState, t, mouseX, mouseY, isSelected, swayM
   const mouseOffsetX = isSelected ? -mouseY * MAX_MOUSE_ROTATION : 0;
   const mouseOffsetY = isSelected ? mouseX * MAX_MOUSE_ROTATION : 0;
 
+  if (animState.spinVel   === undefined) animState.spinVel   = 0;
+  if (animState.spinAngle === undefined) animState.spinAngle = 0;
+  animState.spinAngle += animState.spinVel;
+  animState.spinVel   *= 0.96;
+
   mesh.rotation.x = mouseOffsetX + floatY * 0.3;
-  mesh.rotation.y = mouseOffsetY + floatY;
+  mesh.rotation.y = mouseOffsetY + floatY + animState.spinAngle;
   mesh.rotation.z = floatZ;
 
   animState.emergeY += (animState.baseY - animState.emergeY) * 0.04;
@@ -35,8 +40,10 @@ export function applyFloat(mesh, animState, t, mouseX, mouseY, isSelected, swayM
 }
 
 export function applyCarouselPosition(mesh, animState, target) {
+  if (animState.originY === undefined) animState.originY = animState.baseY;
   mesh.position.x += (target.x - mesh.position.x) * LERP_FACTOR;
   mesh.position.z += (target.z - mesh.position.z) * LERP_FACTOR;
+  animState.baseY   = animState.originY + (target.y ?? 0);
 
   animState.currentScale += (target.scale - animState.currentScale) * LERP_FACTOR;
   mesh.scale.setScalar(animState.currentScale);
