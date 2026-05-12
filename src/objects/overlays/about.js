@@ -9,6 +9,7 @@ export default {
       <p>Getting MCS @UIUC, B.S. Business Admin @USC Marshall<p>
       <p>
         <a href="https://www.linkedin.com/in/dseo24/" target="_blank" rel="noopener">LinkedIn</a> &middot;
+        <a href="https://github.com/dseo24" target="_blank" rel="noopener">GitHub</a> &middot;
         <a href="mailto:danieljehseo@gmail.com">danieljehseo@gmail.com</a>
       </p>
     `;
